@@ -61,14 +61,18 @@ def Rxy_h(c, d, e, weight = 1):
     s = 0
     for xi, yi in data.items():
         w = 1
-        s += w * ( c**2 + 2*c*d*xi - 2*c*yi + 2*e*c*(xi**2) + (d**2)*(xi**2) - 2*d*yi*xi + 2*e*d*(xi**3) + (yi**2) - 2*e*yi*(xi**2) + (e**2)*(xi**4))
+        #s += w * ( c**2 + 2*c*d*xi - 2*c*yi + 2*e*c*(xi**2) + (d**2)*(xi**2) - 2*d*yi*xi + 2*e*d*(xi**3) + (yi**2) - 2*e*yi*(xi**2) + (e**2)*(xi**4))
+        #s += w * ( c**2 + 2*c*d*xi - 2*c*yi + 2*c*e*(xi**2) + (d**2)*(xi**2) - 2*d*yi*xi + 2*d*e*(xi**3) + (yi**2) - 2*yi*e*(xi**2) + (e**2)*(xi**4) )
+        s += w * ( (-c -d*xi - e *(xi**2) + yi)**2 )
     return s
 
 def R_grad_c_h(c, d, e, weight = 1):
     s = 0
     for xi, yi in data.items():
         w = 1
-        s += w * ( 2*c + 2*d*xi - 2*yi + 2*e*(xi**2) )
+        #s += w * ( 2*c + 2*d*xi - 2*yi + 2*e*(xi**2) )
+        s += w * ( -2*(-c -d*xi - e*(xi**2)+ yi) )
+        
     return s
 
     
@@ -76,17 +80,21 @@ def R_grad_e_h(c, d, e, weight = 1):
     s = 0
     for xi, yi in data.items():
         w = 1
-        s += w * ( 2*c*xi + 2*d*(xi**2) - 2*yi*xi + 2*e*(xi**3) )
+        #s += w * ( 2*c*xi + 2*d*(xi**2) - 2*yi*xi + 2*e*(xi**3) )
+        s += w * ( -2*xi*( -c -d*xi -e*(xi**2) +yi ) )
     return s
 
 def R_grad_d_h(c, d, e, weight = 1):
     s = 0
     for xi, yi in data.items():
         w = 1
-        s += w * ( 2*c*(xi**2) + 2*d*(xi**3) - 2*yi*(xi**2) + 2*e*(xi**4) )
+        #s += w * ( 2*c*(xi**2) + 2*d*(xi**3) - 2*yi*(xi**2) + 2*e*(xi**4) )
+        s += w * (-2*(xi**2)*(-c - d*xi - e*(xi**2) + yi))
     return s
 
-
+def exact_line_search_g(x0, y0):
+    
+    return
 
 def BacktrackingLineSearch_g(x0,y0):
     t = 1
@@ -179,10 +187,11 @@ def GradientDescent_h(n):
     next_e0 = e0
 
     startTime = time.time()
-    current_iter = 0
+    current_iter = 0    
     
     while error > 0.004:
         stepSize = BacktrackingLineSearch_h(c0, d0, e0) # Armijo condition
+        #stepSize = 0.01
         anterior = Rxy_h(c0, d0, e0)
         next_c0 = c0 + stepSize * ( - R_grad_c_h(c0, d0, e0) )
         next_d0 = d0 + stepSize * ( - R_grad_d_h(c0, d0, e0) )
@@ -214,6 +223,6 @@ if __name__ == "__main__":
     print(data)
     print(Rxy_g(1,1,0))
     n = input("Numbers of iterations to run ? (Default: 10)\n> ")
-    #solve_linear(int(n))
-    solve_cuadratic(10)
+    solve_linear(int(n))
+    #solve_cuadratic(n)
 
