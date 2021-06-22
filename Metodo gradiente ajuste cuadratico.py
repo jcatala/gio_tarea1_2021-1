@@ -1,4 +1,4 @@
-from sympy import *
+m sympy import *
 import math
 import timeit
 
@@ -29,15 +29,18 @@ data = {
 def gradiente(pc=0,pd=0,pe=0,error=0.00001):
 
     #Definición de variables
-    xi,yi,c,d,e,t = symbols('xi yi c d e t',real = True)
+    xi,yi,c,d,e,t,wi = symbols('xi yi c d e t wi',real = True)
 
     #Función objetivo
-    f = (yi - c - d*xi - e*(xi**2) )**2
+    f = wi*(yi - c - d*xi - e*(xi**2) )**2
 
     
     fin = True
     cont=0
 
+    #Pesos
+    data_wi_h = [94.60278824052166, 2.522889059845905, 70.24646408646953, 13.984637337532114, 3.9101660386039523, 2.2048364906972586, 15.359901460073434, 53.88650176559752, 2.6185846691324035, 67.93031129900751, 97.71202509264852, 251.98462993744843, 19.782969391221854, 8.472764800965082, 12.922363389104648, 23.489124200446383, 680.3636367288225, 8.581627341909218, 23.12213073645765, 4.2583050071010575]
+    
     while fin:
 
         grad_c=0
@@ -50,16 +53,16 @@ def gradiente(pc=0,pd=0,pe=0,error=0.00001):
 
         #Cálculo de gradiente
         for x1,y1 in data.items():
-            grad_c+= dc.evalf(subs={xi:x1,yi:y1,c:pc,d:pd,e:pe})
-            grad_d+= dd.evalf(subs={xi:x1,yi:y1,c:pc,d:pd,e:pe})
-            grad_e+= de.evalf(subs={xi:x1,yi:y1,c:pc,d:pd,e:pe})
+            grad_c+= dc.evalf(subs={xi:x1,yi:y1,c:pc,d:pd,e:pe,wi:data_wi_h[x1-1]})
+            grad_d+= dd.evalf(subs={xi:x1,yi:y1,c:pc,d:pd,e:pe,wi:data_wi_h[x1-1]})
+            grad_e+= de.evalf(subs={xi:x1,yi:y1,c:pc,d:pd,e:pe,wi:data_wi_h[x1-1]})
 
         #Función objetivo en función del tamaño de paso
         g = f.subs([(c,pc-grad_c*t),(d,pd-grad_d*t),(e,pe-grad_e*t)])
         sg=0
 
         for x1,y1 in data.items():
-            sg+= g.evalf(subs={xi:x1,yi:y1})
+            sg+= g.evalf(subs={xi:x1,yi:y1,wi:data_wi_h[x1-1]})
 
         dsg = diff(sg,t)
 
@@ -81,9 +84,9 @@ def gradiente(pc=0,pd=0,pe=0,error=0.00001):
         
         #Se vuelve a calcular el gradiente según la los nuevos valores de c, d y e
         for x1,y1 in data.items():
-            grad_c+= dc.evalf(subs={xi:x1,yi:y1,c:pc,d:pd,e:pe})
-            grad_d+= dd.evalf(subs={xi:x1,yi:y1,c:pc,d:pd,e:pe})
-            grad_e+= de.evalf(subs={xi:x1,yi:y1,c:pc,d:pd,e:pe})
+            grad_c+= dc.evalf(subs={xi:x1,yi:y1,c:pc,d:pd,e:pe,wi:data_wi_h[x1-1]})
+            grad_d+= dd.evalf(subs={xi:x1,yi:y1,c:pc,d:pd,e:pe,wi:data_wi_h[x1-1]})
+            grad_e+= de.evalf(subs={xi:x1,yi:y1,c:pc,d:pd,e:pe,wi:data_wi_h[x1-1]})
         
         #Condición de parada
         if abs(grad_c) < error and abs(grad_d) < error and abs(grad_e) < error:
@@ -97,8 +100,6 @@ def gradiente(pc=0,pd=0,pe=0,error=0.00001):
     print("El valor óptimo de e es:",pe)
         
     print("El numero de iteraciones es de:",cont)
-
-
         
 
         
