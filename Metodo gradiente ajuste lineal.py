@@ -2,6 +2,7 @@ from sympy import *
 import math
 import timeit
 
+#datos
 data = {
 1   :2.910348,
 2   :2.429320,
@@ -27,8 +28,13 @@ data = {
 
 
 def gradiente(pa=1,pb=1,error=0.00001):
+
+    #Definición de variables
     xi,yi,a,b,t = symbols('xi yi a b t',real = True)
+    
+    #Función objetivo
     f = (yi - a - (b*xi))**2
+    
     fin = True
     cont=0
     
@@ -36,14 +42,16 @@ def gradiente(pa=1,pb=1,error=0.00001):
 
         grad_a=0
         grad_b=0
-        
+
         da = diff(f,a)
         db = diff(f,b)
         
+        #Cálculo de gradiente
         for x1,y1 in data.items():
             grad_a+= da.evalf(subs={xi:x1,yi:y1,a:pa,b:pb})
             grad_b+= db.evalf(subs={xi:x1,yi:y1,a:pa,b:pb})
 
+        #Función objetivo en función del tamaño de paso
         g = f.subs([(a,pa-grad_a*t),(b,pb-grad_b*t)])
         sg=0
         
@@ -51,8 +59,11 @@ def gradiente(pa=1,pb=1,error=0.00001):
             sg+= g.evalf(subs={xi:x1,yi:y1})
         
         dsg = diff(sg,t)
+
+        #Valor del tamaño de paso óptimo
         tn = solve(dsg,t)[0]
-        
+
+        #Actualización de valores a y b
         pa = pa - tn*grad_a
         pb = pb - tn*grad_b
         
@@ -61,22 +72,27 @@ def gradiente(pa=1,pb=1,error=0.00001):
 
         grad_a=0
         grad_b=0
-        
+
+        #Se vuelve a calcular el gradiente según la los nuevos valores de a y b
         for x1,y1 in data.items():
             grad_a+= da.evalf(subs={xi:x1,yi:y1,a:pa,b:pb})
             grad_b+= db.evalf(subs={xi:x1,yi:y1,a:pa,b:pb})
-        
+            
+        #Condición de parada
         if grad_a < error and grad_b < error:
             fin = False
 
         cont+=1
         print(pa,pb)
 
-        print(grad_a,grad_b)
+    print("El valor óptimo de a es:",pa)
+    print("El valor óptimo de b es:",pb)    
 
-    print("El numero de iteraciones es de:",cont)
+    print("El número de iteraciones es:",cont)
         
-print("El CPU time es de:",timeit.timeit("gradiente()", globals=locals(),number=1),"segundos")
+print("El CPU time es:",timeit.timeit("gradiente()", globals=locals(),number=1),"segundos")
+
+
 
 
     
