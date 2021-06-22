@@ -26,7 +26,7 @@ data = {
 20  :12.736908
 }
 
-def gradiente(pc=0,pd=0,pe=0,error=0.00001):
+def gradiente(pc=10,pd=10,pe=10,error=0.00001):
 
     #Definición de variables
     xi,yi,c,d,e,t,wi = symbols('xi yi c d e t wi',real = True)
