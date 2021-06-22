@@ -102,7 +102,7 @@ def exact_line_g(f_ag, paso_newton, a0, b0, symbols):
 
     
 
-def do_newton_g(x0, iter = 10):
+def do_newton_g(x0):
     lambdaCuad = 10
     err = 0.004
     #wi, xi, yi = sp.symbols('wi xi yi', cls=sp.Idx)
@@ -240,5 +240,6 @@ def do_newton_h(x0):
 
 if __name__ == "__main__":
 
-    do_newton_g((0,0), iter = 10)
-    do_newton_h((0,0,0))
+    x0 = (0,0,0)
+    do_newton_g( x0[:2])
+    do_newton_h(x0)
