@@ -1,4 +1,4 @@
-m sympy import *
+from sympy import *
 import math
 import timeit
 
@@ -100,7 +100,8 @@ def gradiente(pc=0,pd=0,pe=0,error=0.00001):
     print("El valor óptimo de e es:",pe)
         
     print("El numero de iteraciones es de:",cont)
-        
+
+print("El CPU time es:",timeit.timeit("gradiente()", globals=locals(),number=1),"segundos")
 
         
     
