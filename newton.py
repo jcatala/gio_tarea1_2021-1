@@ -214,6 +214,6 @@ def do_newton_h(x0):
 
 if __name__ == "__main__":
 
-    x0 = (0,0,0)
+    x0 = (100,100,100)
     do_newton_g( x0[:2])
     do_newton_h(x0)
