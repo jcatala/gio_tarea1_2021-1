@@ -51,27 +51,17 @@ def calculate_hessian(fun, symbols = []):
 
 
 
-def do_newton_h(iter = 10):
-    return -1
-
 
 def get_paso_newton_g(f_hess_inv, f_grad,a0,b0, symbols):
-    #delta_newton = (-1) * values * f_grad(data_xi,data_yi,data_wi)
-    #sp.pprint(values)
-    #sp.pprint(f_grad(data_xi,data_yi,data_wi))
     temp = (-1) * sp.Matrix(f_hess_inv) * (sp.Matrix(f_grad(data_xi,data_yi,data_wi_g)))
-    #sp.pprint(temp)
-    #sp.pprint(delta_newton)
-    #x = delta_newton[0][0].subs([(symbols[0],a0),(symbols[1],b0)])
-    #y = delta_newton[1][0].subs([(symbols[0],a0),(symbols[1],b0)])
+
     x = temp[0].subs([(symbols[0],a0),(symbols[1],b0)])
     y = temp[1].subs([(symbols[0],a0),(symbols[1],b0)])
     return [x,y]
 
 def get_lambdacuad_g(f_grad, paso_newton, a0, b0, symbols):
     jacob_ev = f_grad(data_xi,data_yi,data_wi_g)
-    #sp.pprint(jacob_ev)
-    #sp.pprint(paso_newton)
+
     lambda_pow2  = jacob_ev[0].subs([(symbols[0], a0), (symbols[1], b0)]) * (-1) * paso_newton[0]
     lambda_pow2 += jacob_ev[1].subs([(symbols[0], a0), (symbols[1], b0)]) * (-1) * paso_newton[1]
     return lambda_pow2
@@ -81,19 +71,11 @@ def exact_line_g(f_ag, paso_newton, a0, b0, symbols):
     a = symbols[0]
     b = symbols[1]
     # First, evaluate the grad
-    grad_evaluated = [paso_newton[0], paso_newton[1]]
-    #grad_values = f_grad(data_xi,data_yi,data_wi)
-    #grad_evaluated = [  grad_values[0].subs([(a,a0),(b,b0)]),\
-    #                    grad_values[1].subs([(a,a0),(b,b0)])]
-    #hess_values = f_hess(data_xi,data_yi,data_wi)
-    #newton_dec = sp.Matrix(hess_values) * sp.Matrix(grad_evaluated)
-    #sp.pprint(newton_dec)
-    #exit(1)
-    grad_evaluated =   t * sp.Matrix(grad_evaluated)
+    p_new = [paso_newton[0], paso_newton[1]]
+    grad_evaluated =   t * sp.Matrix(p_new)
 
     f_arg = sp.Matrix([a0,b0]) + grad_evaluated # Create the f argument to minimize
     # Evaluate the result
-    #result = f_ag(data_xi, data_yi, data_wi).subs([(a, a0_new), (b, b0_new) ])
     result = f_ag(data_xi, data_yi, data_wi_g).subs([(a,f_arg[0]), (b, f_arg[1] )])
     # derivate and solve for t == 0
     result_dif = sp.diff(result, t)
@@ -109,16 +91,9 @@ def do_newton_g(x0):
 
     wi, xi, yi, a, b, c, t, n,i  = sp.symbols('wi xi yi a b c t n i')
 
-    #b,a,x,y,w,i = sym.symbols('b a x y w i')
-    #f_ab = sp.summation( sp.Indexed('wi',i) * (sp.Indexed('yi',i) - (b * sp.Indexed('xi',i) + a))** 2, (i,0,19))
-    #f = sp.lambdify([xi,yi,wi], err)
-
-    #f_ab = wi * (yi - a - b*xi)**2
-    #f_ab = sp.summation( ww[n] * (( yy[n] - a  - b*xx[n]))**2, (n, 0, 19) )
     f_ab = sp.Sum(sp.Indexed('wi',i)  * (sp.Indexed('yi',i) - a - b*sp.Indexed('xi',i))**2, (i,0,19) )
     f = sp.lambdify([xi, yi, wi], f_ab)
     sp.pprint(f_ab)
-    #print(f(data_xi, data_yi, data_wi).subs([(a,0),(b,0)]) )
     sp.pprint("Initializing ... ")
     f_ab = f_ab
     f_grad = calculate_gradient(f_ab, symbols=[a,b]).doit()
@@ -130,7 +105,6 @@ def do_newton_g(x0):
     f_hess_lamb = f_hess_lamb(data_xi, data_yi, data_wi_g)
     f_hess_inv = sp.Matrix(f_hess_lamb).inv()
     f_hess_inv_value = f_hess_inv
-    #f_hess_inv_value = sp.lambdify([xi, yi, wi], f_hess_inv)
 
     a0,b0 = x0
     startTime = time.time()
@@ -181,9 +155,9 @@ def exact_line_h(f_h, paso_newton , c0, d0 ,e0, symbols):
     d = symbols[1]
     e = symbols[2]
     # First, evaluate the grad
-    grad_evaluated = [paso_newton[0], paso_newton[1] , paso_newton[2]]
-    grad_evaluated =  t * sp.Matrix(grad_evaluated)
-    f_arg = sp.Matrix([c0,d0,e0]) + grad_evaluated # Create the f argument to minimize
+    p_new = [paso_newton[0], paso_newton[1] , paso_newton[2]]
+    p_new =  t * sp.Matrix(p_new)
+    f_arg = sp.Matrix([c0,d0,e0]) + p_new # Create the f argument to minimize
     # Evaluate the result
     result = f_h(data_xi, data_yi, data_wi_h).subs([(c,f_arg[0]),(d,f_arg[1]), (e,f_arg[2]) ])
     # derivate and solve for t == 0
